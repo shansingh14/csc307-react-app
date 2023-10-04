@@ -1,18 +1,15 @@
 {
-  "name": "csc307-react-app",
+  "name": "express-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "backend.js",
   "scripts": {
-    "start": "cd packages/react-frontend && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "workspaces": [
-	  "packages/*"
-  ], 
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "create-react-app": "^5.0.1"
+    "express": "^4.18.2"
   }
 }
