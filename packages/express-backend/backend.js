@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors"
 
 const app = express();
 const port = 8000;
@@ -33,6 +34,36 @@ const users = {
   ],
 };
 
+
+const generateRandomID = () => {
+  const letters = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+
+  const getRandomChar = (chars) =>
+    chars[Math.floor(Math.random() * chars.length)];
+
+  const randomLetters = Array.from({ length: 3 }, () =>
+    getRandomChar(letters)
+  ).join("");
+  const randomNumbers = Array.from({ length: 3 }, () =>
+    getRandomChar(numbers)
+  ).join("");
+
+  return randomLetters + randomNumbers;
+};
+
+const getUniqueID = (array) => {
+  let id;
+  const idExists = (id) => array.some((item) => item.id === id);
+
+  do {
+    id = generateRandomID();
+  } while (idExists(id));
+
+  return id;
+};
+
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -74,22 +105,26 @@ const addUser = (user) => {
 
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
+  const newId = getUniqueID(users["users_list"]);
+  userToAdd.id = newId;
   addUser(userToAdd);
-  res.send();
+  res.status(201).send(userToAdd);
+});
+
+app.delete("/users/:id", (req, res) => {
+  const userToDelete = req.params["id"];
+  deleteUser(userToDelete);
+  res.status(204).send("Deletion Successful");
 });
 
 const deleteUser = (body) => {
   users["users_list"] = users["users_list"].filter(function (obj) {
-    return obj.id !== body.id;
+    return obj.id !== body;
   });
 };
-
-app.delete("/users", (req, res) => {
-  const userToDelete = req.body;
-  deleteUser(userToDelete);
-  res.send();
-});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
+
+
